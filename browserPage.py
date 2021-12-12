@@ -12,7 +12,7 @@ screens = []
 
 editScreenButtonPositions = []
 
-editScreenButtonImage = imageUtil.LoadImage("images/editScreenIcon.png")
+editScreenButtonImage = imageUtil.LoadImage("images/editScreenIcon.png", False)
 editScreenButtonSize = 64
 editScreenButtonOrigin = Vector2D(200, 800)
 
@@ -20,7 +20,7 @@ screensDataFilename = "data/screens.txt"
 
 editingNewScreenName = False
 
-addNewScreenButtonImage = imageUtil.LoadImage("images/addNewScreenIcon.png")
+addNewScreenButtonImage = imageUtil.LoadImage("images/addNewScreenIcon.png", False)
 addNewScreenButtonSize = 64
 addNewScreenButtonOrigin = Vector2D(1200, 800)
 newScreenName = ""

@@ -10,7 +10,7 @@ def LoadTileTypes():
         for word in line.split():
             tileData.append(word)
         if len(tileData) == 3:
-            tileTypes.append(TileType(int(tileData[0]), imageUtil.LoadImage("images/" + tileData[1]), tileData[2]))
+            tileTypes.append(TileType(int(tileData[0]), imageUtil.LoadImage("images/" + tileData[1], False), tileData[2]))
     f.close()
     tileTypes.append(TileType(0, None, "water"))
     

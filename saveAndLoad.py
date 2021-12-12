@@ -40,7 +40,7 @@ def LoadLevelData():
                 attributes = ""
                 if len(entityData) > 4:
                     attributes = " ".join(entityData[4:])
-                screenData.entities.append(Entity(entityTypeData.GetEntityTypeByID(int(entityData[1])), int(entityData[2]), int(entityData[3]), False, attributes))
+                screenData.entities.append(Entity(entityTypeData.GetEntityTypeByID(int(entityData[1])), float(entityData[2]), float(entityData[3]), False, attributes))
         else:
             if currentCommand == "bgTiles":
                 for i in range(len(line.split())):

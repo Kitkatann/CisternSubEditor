@@ -13,6 +13,11 @@ class Vector2D:
         y = self.y + other.y
         return Vector2D(x, y)
         
+    def __sub__(self, other):
+        x = self.x - other.x
+        y = self.y - other.y
+        return Vector2D(x, y)
+    
     def __mul__(self, other):
         if isinstance(other, Vector2D):
             x = self.x * other.x

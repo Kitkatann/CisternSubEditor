@@ -8,8 +8,11 @@ batch = pyglet.graphics.Batch()
 
 myColors = {"grey":(77, 77, 77), "red":(255,0,0)}
 
-def LoadImage(filename):
+def LoadImage(filename, anchorCenter):
     im = image.load(filename)
+    if anchorCenter:
+        im.anchor_x = im.width // 2
+        im.anchor_y = im.height // 2
     texture = im.get_texture()
     glEnable(texture.target)
     glBindTexture(texture.target, texture.id)
