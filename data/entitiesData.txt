@@ -1,0 +1,2 @@
+1000	playerStartIcon.png		playerStart
+1001	exitIcon.png			exit
