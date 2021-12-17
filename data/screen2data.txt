@@ -13,3 +13,6 @@ entity 1001 496.0 16.0 screen3 down
 entity 1001 528.0 16.0 screen3 down
 entity 1001 560.0 16.0 screen3 down
 entity 1001 592.0 16.0 screen3 down
+entity 1002 367 631 
+entity 1002 559 562 
+entity 1002 719 684 

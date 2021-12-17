@@ -17,6 +17,7 @@ from pageData import Page
 
 
 mousePos = Vector2D()
+gridMousePos = Vector2D()
 
 class Layer(Enum):
     BACKGROUND = 1
@@ -25,6 +26,7 @@ class Layer(Enum):
     ENTITIES = 4
 
 editingEntityAttributes = False
+selectEntitiesMode = False
 
 selectedTile = None
 selectedEntityType = None
@@ -32,6 +34,8 @@ selectedEntityType = None
 selectedEntityAttribsText = ""
 
 entityPaletteClicked = False
+
+entitiesBeingMoved = False
 
 selectedLayer = Layer.WALLS
 
@@ -105,6 +109,7 @@ def KeyPressed(symbol, modifiers):
     global editingEntityAttributes
     global selectedEntityAttribsText
     global entityAttribColour
+    global selectEntitiesMode
     
     if editingEntityAttributes:
         if symbol == key.BACKSPACE:
@@ -125,15 +130,24 @@ def KeyPressed(symbol, modifiers):
         else:
             selectedEntityAttribsText += str(chr(symbol))
     else:
-        screenData.entities = [e for e in screenData.entities if not e.selected]
+        if symbol == key.DELETE:
+            screenData.entities = [e for e in screenData.entities if not e.selected]
+        if symbol == key.TAB:
+            selectEntitiesMode = not selectEntitiesMode
 
 def MouseMoved(x, y, dx, dy):
+    global gridMousePos
+    
     mousePos.x = x
     mousePos.y = y
+    gridMousePos = mousePos - gridOrigin
 
 def MouseDragged(x, y, dx, dy, buttons, modifiers):
     if selectedLayer != Layer.ENTITIES:
         MousePressed(x, y, buttons, modifiers)
+    #mousePos.x = x
+    #mousePos.y = y
+    #gridMousePos = mousePos - gridOrigin
 
 #snaps a point relative to a grid origin to a point on the grid
 def SnapPointToGrid(point, cellSize):
@@ -142,6 +156,7 @@ def SnapPointToGrid(point, cellSize):
 
 def MouseReleased(x, y, button, modifiers):
     global entityPaletteClicked
+    global entitiesBeingMoved
     
     if entityPaletteClicked:
         if CheckPointOverRectangle(Vector2D(x, y), gridOrigin, screenData.gridWidth * gridTileSize, screenData.gridHeight * gridTileSize):
@@ -151,8 +166,29 @@ def MouseReleased(x, y, button, modifiers):
             if entitiesGridSnapSelected:
                 SnapPointToGrid(pos, gridTileSize / 2)
             screenData.CreateEntity(selectedEntityType, pos.x, pos.y)
-
     entityPaletteClicked = False
+    
+    if entitiesBeingMoved:
+        validEntityMove = True
+        for e in screenData.entities:
+            if e.selected:
+                pos = gridMousePos.Clone()
+                pos += e.dragOffset
+                if entitiesGridSnapSelected:
+                    SnapPointToGrid(pos, gridTileSize / 2)
+                if not CheckPointOverRectangle(pos, gridOrigin, screenData.gridWidth * gridTileSize, screenData.gridHeight * gridTileSize):
+                    validEntityMove = False
+        if validEntityMove:
+            #move all selected entities to new locations
+            for e in screenData.entities:
+                if e.selected:
+                    pos = gridMousePos.Clone()
+                    pos += e.dragOffset
+                    if entitiesGridSnapSelected:
+                        SnapPointToGrid(pos, gridTileSize / 2)                    
+                    e.x = pos.x
+                    e.y = pos.y
+    entitiesBeingMoved = False
 
 def MousePressed(x, y, button, modifiers):
     global selectedTile
@@ -166,6 +202,7 @@ def MousePressed(x, y, button, modifiers):
     global editingEntityAttributes
     global entityAttribColour
     global entitiesGridSnapSelected
+    global entitiesBeingMoved
     
     #mouse pressed over screen grid
     cellIndex = GetMouseOverGenericGridCell(screenData.gridWidth, screenData.gridHeight, gridOrigin, gridTileSize)
@@ -177,10 +214,20 @@ def MousePressed(x, y, button, modifiers):
         if selectedLayer == Layer.WALLS and wallsLayerActive:
             screenData.wallsLayer[cellIndex] = selectedTile
         if selectedLayer == Layer.ENTITIES and entitiesActive:
-            #select entity/entities
-            e = GetEntityAtPoint(mousePos)
-            if e is not None:
-                e.selected = not e.selected
+            if selectEntitiesMode:
+                #select/deselect entities
+                e = GetEntityAtPoint(mousePos)
+                if e is not None:
+                    e.selected = not e.selected
+            else:
+                if not entitiesBeingMoved:
+                    #move selected entities
+                    entitiesBeingMoved = True
+                    for e in screenData.entities:
+                        if e.selected:
+                            e.dragOffset = Vector2D(e.x, e.y) - gridMousePos
+                            print("x: " + str(e.x) + " y: " + str(e.y) + " offset: " + str(e.dragOffset) + " gridMousePos : " + str(gridMousePos))
+                
     
     #mouse pressed over tile palette
     cellIndex = GetMouseOverGenericGridCell(tilePaletteWidth, tilePaletteHeight, tilePaletteOrigin, gridTileSize)
@@ -194,6 +241,9 @@ def MousePressed(x, y, button, modifiers):
         if selectedLayer == Layer.ENTITIES and entitiesActive:
             selectedEntityType = entityTypeData.entityTypes[cellIndex]
             selectedTile = None
+            #deselect all other entities
+            for e in screenData.entities:
+                e.selected = False
             entityPaletteClicked = True
     
     #mouse pressed over toolbar
@@ -332,9 +382,24 @@ def DrawPage():
     if entityPaletteClicked:
         pos = mousePos.Clone()
         pos -= gridOrigin
-        SnapPointToGrid(pos, gridTileSize / 2)
+        if entitiesGridSnapSelected:
+            SnapPointToGrid(pos, gridTileSize / 2)
         pos += gridOrigin
         imageUtil.DrawImage(selectedEntityType.image, pos.x, pos.y)
+    
+    #draw selected entities being moved
+    if entitiesBeingMoved:
+        for e in screenData.entities:
+             if e.selected:
+                image = e.entityType.image
+                pos = gridMousePos.Clone()
+                pos += e.dragOffset
+                if entitiesGridSnapSelected:
+                    SnapPointToGrid(pos, gridTileSize / 2)
+                pos += gridOrigin
+                
+                imageUtil.DrawImage(image, pos.x, pos.y)
+    
     
     #display entity/entities being edited attribute text
     imageUtil.DrawRectangle(entityAttribTextBoxPos, entityAttribTextBoxWidth, entityAttribTextBoxHeight, entityAttribColour)

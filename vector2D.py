@@ -9,8 +9,15 @@ class Vector2D:
         return "({0},{1})".format(self.x, self.y)
 
     def __add__(self, other):
-        x = self.x + other.x
-        y = self.y + other.y
+        if isinstance(other, Vector2D):
+            x = self.x + other.x
+            y = self.y + other.y
+        if isinstance(other, float):
+            x = self.x + other
+            y = self.y + other
+        if isinstance(other, int):
+            x = self.x + other
+            y = self.y + other
         return Vector2D(x, y)
         
     def __sub__(self, other):

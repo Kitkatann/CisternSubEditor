@@ -1,3 +1,5 @@
+from vector2D import Vector2D
+
 class Entity:
     def __init__(self, entityType, x, y, selected, attributes):
         self.entityType = entityType
@@ -5,5 +7,6 @@ class Entity:
         self.y = y
         self.selected = selected
         self.attributes = attributes
+        self.dragOffset = Vector2D(0, 0)
 
 
