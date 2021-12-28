@@ -226,7 +226,6 @@ def MousePressed(x, y, button, modifiers):
                     for e in screenData.entities:
                         if e.selected:
                             e.dragOffset = Vector2D(e.x, e.y) - gridMousePos
-                            print("x: " + str(e.x) + " y: " + str(e.y) + " offset: " + str(e.dragOffset) + " gridMousePos : " + str(gridMousePos))
                 
     
     #mouse pressed over tile palette
