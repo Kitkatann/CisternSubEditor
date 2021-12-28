@@ -9,10 +9,8 @@ entity 1001 16.0 144.0 screen1 left
 entity 1001 16.0 112.0 screen1 left
 entity 1001 16.0 80.0 screen1 left
 entity 1001 16.0 48.0 screen1 left
-entity 1001 496.0 16.0 screen3 down
 entity 1001 528.0 16.0 screen3 down
 entity 1001 560.0 16.0 screen3 down
-entity 1001 592.0 16.0 screen3 down
 entity 1002 369.0 627.0 
 entity 1002 561.0 558.0 
 entity 1002 721.0 680.0 
