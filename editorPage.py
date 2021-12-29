@@ -176,7 +176,7 @@ def MouseReleased(x, y, button, modifiers):
                 pos += e.dragOffset
                 if entitiesGridSnapSelected:
                     SnapPointToGrid(pos, gridTileSize / 2)
-                if not CheckPointOverRectangle(pos, gridOrigin, screenData.gridWidth * gridTileSize, screenData.gridHeight * gridTileSize):
+                if not CheckPointOverRectangle(Vector2D(x, y), gridOrigin, screenData.gridWidth * gridTileSize, screenData.gridHeight * gridTileSize):
                     validEntityMove = False
         if validEntityMove:
             #move all selected entities to new locations
